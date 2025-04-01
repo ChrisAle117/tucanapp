@@ -10,7 +10,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('deporte', '0001_initial'),
-        ('usuario', '0001_initial'),
     ]
 
     operations = [
@@ -25,7 +24,7 @@ class Migration(migrations.Migration):
                 ('num_titulares', models.IntegerField(default=0)),
                 ('num_suplentes', models.IntegerField(default=0)),
                 ('deporte', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='deporte.deporte')),
-                ('entrenador', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='equipos_entrenados', to='usuario.usuario')),
+
             ],
         ),
     ]

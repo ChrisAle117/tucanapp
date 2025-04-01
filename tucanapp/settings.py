@@ -11,14 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import pymysql
 pymysql.install_as_MySQLdb()
-
+# import os
+# import logging
+# from logging.handlers import RotatingFileHandler
 
 from pathlib import Path
-
-
-
-
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,9 +32,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,9 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'usuario',
+    'users',
     'app',
-    'rest_framework',
     'deporte',
     'equipo',
     'jugador',
@@ -57,7 +50,8 @@ INSTALLED_APPS = [
     'configuracion_deporte',
     'logger',
     'evento',
-
+    'rest_framework_simplejwt',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -90,10 +84,60 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tucanapp.wsgi.application'
 
+# LOG_DIR = os.path.join(BASE_DIR, 'logs')
+# if not os.path.exists(LOG_DIR):
+#     os.makedirs(LOG_DIR)
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'detailed': {
+#             'format': '[{asctime}] [{levelname}] {name}: {message}',
+#             'style': '{',
+#         },
+#     },
+#     'handlers': {
+#         'file': {
+#             'level': 'WARNING',  # Captura advertencias, errores y críticas
+#             'class': 'logging.handlers.RotatingFileHandler',
+#             'filename': os.path.join(LOG_DIR, 'django.log'),
+#             'maxBytes': 5 * 1024 * 1024,  # 5 MB por archivo
+#             'backupCount': 5,  # Mantiene hasta 5 archivos de backup
+#             'formatter': 'detailed',
+#         },
+#         'http': {
+#             'level': 'DEBUG',
+#             'class': 'logging.handlers.RotatingFileHandler',
+#             'filename': os.path.join(LOG_DIR, 'http_requests.log'),
+#             'maxBytes': 5 * 1024 * 1024,  
+#             'backupCount': 3,
+#             'formatter': 'detailed',
+#         },
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'detailed',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['file', 'console'],
+#             'level': 'WARNING',
+#             'propagate': True,
+#         },
+#         'django.request': {  # Captura errores HTTP como 404 y 500
+#             'handlers': ['http', 'console'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#     },
+# }
+
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+CORS_ALLOW_ALL_ORIGINS = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -108,6 +152,7 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+AUTH_USER_MODEL = 'users.CustomUser'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -123,6 +168,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 
 
 # Internationalization
@@ -146,3 +192,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+HANDLER404 = 'app.views.error_404_view'
+HANDLER500 = 'app.views.error_500_view'
+
+#LOGIN_URL = '/users/login/'
+#LOGIN_REDIRECT_URL = '/home' # Dónde irán los usuarios tras iniciar sesión
+#LOGOUT_REDIRECT_URL = '/users/login/'

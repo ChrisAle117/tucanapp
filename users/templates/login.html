@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantalla de Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+        }
+
+        .left-side {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('tucanapp.png') no-repeat center center/cover;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .app-name {
+            background: black;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            color: white;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .left-side h1 {
+            font-size: 2.5rem;
+            max-width: 400px;
+        }
+
+        .right-side {
+            background: #f9fafb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .icon-container {
+            background: #e5e7eb;
+            padding: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .btn-login {
+            width: 100%;
+            background: black;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-login:hover {
+            background: #333;
+        }
+
+        .register-link {
+            margin-top: 15px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <div class="col-md-6 left-side">
+                <div class="app-name">TUCANAAP</div>
+                <h1>¡Inicia sesión como un Entrenador!</h1>
+            </div>
+            <div class="col-md-6 right-side">
+                <div class="form-container">
+                    <div class="icon-container">
+                        <i class="fa fa-user fa-2x" style="color: #333;"></i>
+                    </div>
+                    <h2>Bienvenido</h2>
+                    <form onsubmit="handleSubmit(event)">
+                        <div class="mb-3">
+                            <input type="email" id="email" class="form-control" placeholder="Ingresa tu correo"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" id="password" class="form-control"
+                                placeholder="Ingresa tu contraseña" required minlength="5">
+                            <p class="text-muted" style="font-size: 12px;">Mínimo 5 caracteres</p>
+                        </div>
+                        <button type="submit" class="btn-login">Ingresar</button>
+                    </form>
+                    <p class="register-link">¿No tienes una cuenta? <a href="registro.html">Registrar</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            console.log("Correo:", email, "Contraseña:", password);
+
+            axios.post('http://127.0.0.1:8000/users/token/', {
+                email: email,
+                password: password
+            })
+                .then(response => {
+                    localStorage.setItem("accessToken", response.data.access);
+                    localStorage.setItem("refreshToken", response.data.refresh);
+
+                })
+                .catch(error => {
+                    const errorMessage = error.response?.data?.detail || 'Authentication failed';
+                    console.error("Error:", errorMessage);
+                    alert("Error: " + errorMessage);
+                });
+        }
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
