@@ -7,6 +7,12 @@ from .models import CustomUser
 from .serializers import CustomUserSerializer
 from rest_framework.renderers import JSONRenderer
 
+from django.contrib.auth import login, authenticate, logout
+from .forms import CustomUserLoginForm, CustomUserCreationForm
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+import json
+from .message import message as Message
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
@@ -67,4 +73,22 @@ class CustomUserFormAPI(APIView):
             )
             return Response({'message': 'Usuario creado con éxito'},status=status.HTTP_201_CREATED)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def login_view(request):
+    return render(request, 'login.html')
+
+def logout_view(request):
+    logout(request)
+
+    message = Message(
+        type="info",
+        message="Se ha cerrado la sesión exitosamente",
+        code=200,
+        img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8MIbugIhZBykSmQcR0QPcfnPUBOZQ6bm35w&s"
+    )
+    return render(request, "login.html", {"message": json.dumps(message.to_dict())})
+
+@login_required
+def home_view(request):
+    return render(request, 'home.html')
 

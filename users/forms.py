@@ -28,45 +28,31 @@ class CustomUserCreationForm(UserCreationForm):
             'detalles': forms.Textarea(attrs={'placeholder': 'Detalles'}),
         }
 
-class CustomAuthenticationForm(AuthenticationForm):
+class CustomUserLoginForm(AuthenticationForm):
     username = forms.CharField(
-        class_='mb-3 form-control',
-        type='text',
-        widget=forms.TextInput(attrs={'placeholder': 'Nombre de usuario'}),
-        strip=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de usuario'})
     )
     password = forms.CharField(
-        class_='mb-3 form-control',
-        type='password',
-        placeholder='Contraseña',
-        strip=False,
-        widget=forms.PasswordInput(attrs={'placeholder': 'Contraseña'})
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña'})
     )
-    error_messages = {
-        'invalid_login': {
-            'message': 'Nombre de usuario o contraseña incorrectos.',
-        },
-        'inactive': {
-            'message': 'Esta cuenta está inactiva.',
-        },
-    }
     class Meta:
         model = CustomUser
         fields = ['username', 'password']
-        widgets = {
-            'username': forms.TextInput(attrs={'placeholder': 'Nombre de usuario'}),
-            'password': forms.PasswordInput(attrs={'placeholder': 'Contraseña'}),
+        error_messages = {
+            'username': {
+                'required': 'Este campo es obligatorio.',
+                'invalid': 'Nombre de usuario o contraseña incorrectos.'
+            },
+            'password': {
+                'required': 'Este campo es obligatorio.',
+            }
         }
+        
+        
 
-    def clean(self):
-        super().clean()
-        if self.cleaned_data.get('username') == '':
-            raise forms.ValidationError('El nombre de usuario es obligatorio.')
-        if self.cleaned_data.get('password') == '':
-            raise forms.ValidationError('La contraseña es obligatoria.')
-        return self.cleaned_data
     
 
+    
 
 
 
