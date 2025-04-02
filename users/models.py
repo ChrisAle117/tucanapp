@@ -10,10 +10,6 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
-        user.name = 'Admin'
-        user.apellidos = 'Ayala'
-        user.rol = 'admin'
-        user.detalles = 'Admin absoluto del sistema'
         user.save(using=self._db)
         return user
  
@@ -31,6 +27,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
     username = models.CharField(max_length=45, unique=True)
+
+    token = models.CharField(max_length=255, blank=True, null=True)
+    
     email = models.EmailField(unique=True, null=False)
     nombre = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=50)

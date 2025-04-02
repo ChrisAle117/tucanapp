@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla de Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        .modal {
+            background: rgba(0,0,0,0.5);
+        }
+        .loading {
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h3>Tabla de usuarios</h3>
+        <div id="loading" class="loading">Cargando...</div>
+        <table id="userTable" class="table table-striped" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Modal de Edición -->
+    <div id="editModal" class="modal" tabindex="-1" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Usuario</h5>
+                    <button type="button" class="btn-close" onclick="closeModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <div class="mb-3">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Apellido</label>
+                            <input type="text" class="form-control" name="surname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Email</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Teléfono</label>
+                            <input type="text" class="form-control" name="tel" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="saveUser()">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let usersData = [];
+        const currentUserId = localStorage.getItem('id');
+        
+        // Configuración inicial
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUsers();
+        });
+
+        async function fetchUsers() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/users/api/');
+                usersData = await response.json();
+                renderTable();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('userTable').style.display = 'table';
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.querySelector('#userTable tbody');
+            tbody.innerHTML = '';
+            
+            usersData.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.tel}</td>
+                    <td>
+                        <button class="btn btn-warning me-2" onclick="handleEdit(${user.id})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger" onclick="handleDelete(${user.id})" 
+                            ${user.id === currentUserId ? 'disabled' : ''}>
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function handleDelete(userId) {
+            if (userId == currentUserId) {
+                alert("No puedes eliminar tu propio usuario.");
+                return;
+            }
+            
+            if (confirm("¿Estás seguro de eliminar este usuario?")) {
+                try {
+                    await apiRequest('DELETE', `users/api/${userId}/`);
+                    usersData = usersData.filter(user => user.id !== userId);
+                    renderTable();
+                    alert("Usuario eliminado con éxito.");
+                } catch (error) {
+                    handleApiError(error, () => handleDelete(userId));
+                }
+            }
+        }
+
+        function handleEdit(userId) {
+            currentUser = usersData.find(user => user.id === userId);
+            const form = document.getElementById('editForm');
+            form.elements.name.value = currentUser.name;
+            form.elements.surname.value = currentUser.surname || '';
+            form.elements.email.value = currentUser.email;
+            form.elements.tel.value = currentUser.tel;
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        async function saveUser() {
+            const form = document.getElementById('editForm');
+            const updatedUser = {
+                ...currentUser,
+                name: form.elements.name.value,
+                surname: form.elements.surname.value,
+                email: form.elements.email.value,
+                tel: form.elements.tel.value
+            };
+
+            try {
+                const data = await apiRequest('PUT', `users/api/${currentUser.id}/`, updatedUser);
+                usersData = usersData.map(user => user.id === currentUser.id ? data : user);
+                renderTable();
+                closeModal();
+                alert("Usuario actualizado con éxito.");
+            } catch (error) {
+                handleApiError(error, saveUser);
+            }
+        }
+
+        async function apiRequest(method, endpoint, body = null) {
+            const token = localStorage.getItem('accessToken');
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+
+            let response = await fetch(`http://127.0.0.1:8000/${endpoint}`, {
+                method,
+                headers,
+                body: body ? JSON.stringify(body) : null
+            });
+
+            if (response.status === 401) {
+                const newToken = await refreshToken();
+                headers.Authorization = `Bearer ${newToken}`;
+                response = await fetch(`http://127.0.0.1:8000/${endpoint}`, {
+                    method,
+                    headers,
+                    body: body ? JSON.stringify(body) : null
+                });
+            }
+
+            if (!response.ok) throw new Error(await response.text());
+            return response.json();
+        }
+
+        async function refreshToken() {
+            const refreshToken = localStorage.getItem('refreshToken');
+            const response = await fetch('http://127.0.0.1:8000/users/token/refresh/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ refresh: refreshToken })
+            });
+            
+            if (!response.ok) {
+                alert('Sesión expirada. Redirigiendo a login...');
+                window.location.href = '/login';
+                return;
+            }
+            
+            const data = await response.json();
+            localStorage.setItem('accessToken', data.access);
+            return data.access;
+        }
+
+        function handleApiError(error, retryCallback) {
+            if (error.message.includes('401')) {
+                refreshToken().then(() => retryCallback());
+            } else {
+                alert(error.message);
+                console.error(error);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+            currentUser = null;
+        }
+    </script>
+</body>
+</html>

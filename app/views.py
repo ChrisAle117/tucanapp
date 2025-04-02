@@ -14,5 +14,5 @@ def show_error_404(request):
 def show_error_505(request):
     return render(request, '505.html', status=505)
 
-def generar_error(request):
-    return 7/0
+def show_error_401(request):
+    return render(request, '500.html', status=401)

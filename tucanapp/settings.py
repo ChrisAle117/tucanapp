@@ -195,6 +195,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 HANDLER404 = 'app.views.error_404_view'
 HANDLER500 = 'app.views.error_500_view'
+HANDLER401 = 'app.views.error_401_view'
 
 LOGIN_URL = '/login/'
 #LOGIN_REDIRECT_URL = '/home' # Dónde irán los usuarios tras iniciar sesión

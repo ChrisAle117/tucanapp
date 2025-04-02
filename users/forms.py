@@ -27,27 +27,6 @@ class CustomUserCreationForm(UserCreationForm):
             'rol': forms.Select(attrs={'placeholder': 'Rol'}),
             'detalles': forms.Textarea(attrs={'placeholder': 'Detalles'}),
         }
-
-class CustomUserLoginForm(AuthenticationForm):
-    username = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de usuario'})
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña'})
-    )
-    class Meta:
-        model = CustomUser
-        fields = ['username', 'password']
-        error_messages = {
-            'username': {
-                'required': 'Este campo es obligatorio.',
-                'invalid': 'Nombre de usuario o contraseña incorrectos.'
-            },
-            'password': {
-                'required': 'Este campo es obligatorio.',
-            }
-        }
-        
         
 
     
