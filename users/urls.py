@@ -18,10 +18,9 @@ urlpatterns = [
     #El siguiente path es para refrescar el token de sesión
     #(Si es que eso queremos porque podriamos iniciar sesión de nuevo simplemente)
     path('token/refresh/', TokenRefreshView.as_view(), name='Token_refresh'),
-
-    #Path que sirve el formulario
-    path('form/', CustomUserFormAPI.as_view(), name='formulario' ),
-
     #Path para registrar un nuevo usuario
-    path('registrar/', register_view, name='register'),
+    path('registrar/', CustomUserFormAPI.as_view() , name='register'),
+
+    path('dashboard/', dashboard, name='dashboard'),
+
 ]

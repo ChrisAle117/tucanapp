@@ -151,7 +151,7 @@
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            username: email,
+            email: email,
             password: password,
           }),
         })
@@ -166,12 +166,11 @@
           .then((data) => {
             localStorage.setItem("accessToken", data.access);
             localStorage.setItem("refreshToken", data.refresh);
-            // fetch("",{
-            //   method: "GET",
-            //   headers: {
-            //     Autorizaytion: "Bearer " + localStorage.getItem("accessToken"),
-            //   }
-            // })
+            
+            // Redirigir a la página de inicio después de un inicio de sesión exitoso
+            window.location.href = "/users/dashboard/";
+            // no redirigir a la pagina que quiero
+
           })
           .catch((error) => {
             const errorMessage = error.detail || "Authentication failed";

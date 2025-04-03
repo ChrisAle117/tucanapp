@@ -7,6 +7,15 @@ from .models import CustomUser
 from .serializers import CustomUserSerializer
 from rest_framework.renderers import JSONRenderer
 
+from django.contrib.auth import get_user_model
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
+
+from django.contrib.auth.decorators import login_required
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
@@ -27,32 +36,40 @@ from .serializers import CustomTokenObtainPairSerializer
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
-
-
-from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
-from .forms import CustomUserCreationForm
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
+# Quito el decorador de csrf 
 
 class CustomUserFormAPI(APIView):
-    def get(self, request, *args, **kwargs):
-        form = CustomUserCreationForm()
-        fields = {
-            field: {
-            'label': form[field].label,
-            'input':form[field].field.widget.attrs,
-            'type': form[field].field.widget.input_type,
-            }
-                for field in form.fields
-        }
-        return Response(fields)
-
+        
+    authentication_classes = [JWTAuthentication]
+    permission_classes=[IsAuthenticated]
     def post(self, request, *args, **kwargs):
-        form = CustomUserCreationForm(request.data)
-        if form.is_valid():
-            user_data = form.cleaned_data
+        try:
+            user_data = json.loads(request.body)
+            User = get_user_model()
+            user = User.objects.create_user(
+                username=user_data['username'],
+                email=user_data['email'],
+                password=user_data['password'],
+                nombre=user_data['nombre'],
+                apellidos=user_data['apellidos'],
+                rol=user_data['rol'],
+                detalles=user_data['detalles']
+            )
+            return Response({'message': 'Usuario creado con éxito'}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'message': f'Error: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+        
+def dashboard(request):
+    return render(request, 'dashboard.html')
+
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
+@method_decorator(csrf_exempt, name='dispatch')
+def createUser(self, request, *args, **kwargs):
+    if request.method == 'POST':
+        try:
+            user_data = json.loads(request.body)
             User = get_user_model()
             user = User.objects.create_user(
                 username=user_data['username'],
@@ -63,31 +80,12 @@ class CustomUserFormAPI(APIView):
                 rol=user_data['rol'],
                 detalles=user_data['detalles']
             )
-            return Response({'message': 'Usuario creado con éxito'},status=status.HTTP_201_CREATED)
-        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import IsAuthenticated
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-
-def register_view(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            message = Message(
-                type="success",
-                message="Usuario creado con éxito",
-                code=200,
-                img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8MIbugIhZBykSmQcR0QPcfnPUBOZQ6bm35w&s"
-            )
-            return render(request, 'login.html', {"message": json.dumps(message.to_dict())})
+            return Response({'message': 'Usuario creado con éxito'}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'message': f'Error: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        form = CustomUserCreationForm()
-    return render(request, 'registro.html', {'form': form})
+        return Response({'message': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 from django.contrib.auth import  logout
 from django.shortcuts import render
