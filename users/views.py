@@ -39,7 +39,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 # Quito el decorador de csrf 
 
 class CustomUserFormAPI(APIView):
-        
     authentication_classes = [JWTAuthentication]
     permission_classes=[IsAuthenticated]
     def post(self, request, *args, **kwargs):
@@ -58,34 +57,10 @@ class CustomUserFormAPI(APIView):
             return Response({'message': 'Usuario creado con éxito'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'message': f'Error: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+
 def dashboard(request):
     return render(request, 'dashboard.html')
-
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-
-@method_decorator(csrf_exempt, name='dispatch')
-def createUser(self, request, *args, **kwargs):
-    if request.method == 'POST':
-        try:
-            user_data = json.loads(request.body)
-            User = get_user_model()
-            user = User.objects.create_user(
-                username=user_data['username'],
-                email=user_data['email'],
-                password=user_data['password1'],
-                nombre=user_data['nombre'],
-                apellidos=user_data['apellidos'],
-                rol=user_data['rol'],
-                detalles=user_data['detalles']
-            )
-            return Response({'message': 'Usuario creado con éxito'}, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            return Response({'message': f'Error: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response({'message': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
 
 from django.contrib.auth import  logout
 from django.shortcuts import render
