@@ -2,7 +2,7 @@ from django.db import models
 from django.forms import ValidationError
 
 from deporte.models import Deporte
-from usuario.models import Usuario
+from users.models import CustomUser as Usuario
 
 class Equipo(models.Model):
     nombre = models.CharField(max_length=45, unique=True)
