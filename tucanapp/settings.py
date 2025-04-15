@@ -183,20 +183,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-HANDLER404 = 'app.views.error_404_view'
-HANDLER500 = 'app.views.error_500_view'
-HANDLER401 = 'app.views.error_401_view'
-
-LOGIN_URL = '/login/'
-#LOGIN_REDIRECT_URL = '/home' # Dónde irán los usuarios tras iniciar sesión
-LOGOUT_REDIRECT_URL = '/login/'
