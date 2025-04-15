@@ -36,9 +36,9 @@ def crear_usuarios_por_defecto(apps, schema_editor):
                 is_staff=True,
                 is_active=True,
             )
-            print(f"Usuario dueño '{DUENO_USERNAME}' creado exitosamente.")
+            print(f"Usuario presidente '{DUENO_USERNAME}' creado exitosamente.")
         else:
-            print(f"El usuario dueño '{DUENO_USERNAME}' ya existe. No se creó un duplicado.")
+            print(f"El usuario presidente '{DUENO_USERNAME}' ya existe. No se creó un duplicado.")
 
         # Crear usuario entrenador si no existe
         if not CustomUser.objects.filter(username=ENTRENADOR_USERNAME).exists():
@@ -66,7 +66,7 @@ def eliminar_usuarios_por_defecto(apps, schema_editor):
     Elimina los usuarios dueño y entrenador por defecto si existen.
     """
     CustomUser = apps.get_model('users', 'CustomUser')
-    DUENO_USERNAME = os.environ.get('DJANGO_DUENO_USERNAME', 'dueno')
+    DUENO_USERNAME = os.environ.get('DJANGO_DUENO_USERNAME', 'presidente')
     ENTRENADOR_USERNAME = os.environ.get('DJANGO_ENTRENADOR_USERNAME', 'entrenador')
 
     try:

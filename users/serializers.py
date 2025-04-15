@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import CustomUser
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.exceptions import AuthenticationFailed
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -24,16 +25,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         if user and user.check_password(password):
             self.user = user
         else:
-            raise serializers.ValidationError("Credenciales inválidas")
+            raise AuthenticationFailed("Credenciales inválidas")
         
         attrs["username"] = self.user.username
         attrs["email"] = self.user.email
 
         data = super().validate(attrs)
-
-        data["id"] = self.user.id
-        data["rol"] = self.user.rol
-
+        
         return data
 
 
