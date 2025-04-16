@@ -5,11 +5,18 @@ from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(self, email, username ,password=None, **extra_fields):
         if not email:
             raise ValueError('El correo electrónico es obligatorio')
+        if not username:
+            raise ValueError('El nombre de usuario es obligatorio')
+        if not password:
+            raise ValueError('La contraseña es obligatoria')
+        
         email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+        username = self.model.normalize_username(username)
+
+        user = self.model(email=email, username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user

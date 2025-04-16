@@ -7,7 +7,6 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from django.shortcuts import render
 
 class DeporteViewSet(viewsets.ModelViewSet):
     queryset = Deporte.objects.all()

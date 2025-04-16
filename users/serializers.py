@@ -31,6 +31,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         attrs["email"] = self.user.email
 
         data = super().validate(attrs)
+
+        data["id"]= self.user.id
         
         return data
 
