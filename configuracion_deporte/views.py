@@ -4,6 +4,8 @@ from rest_framework import viewsets
 from rest_framework.renderers import JSONRenderer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
 
 class ConfiguracionDeporteViewSet(viewsets.ModelViewSet):
     queryset = ConfiguracionDeporte.objects.all()
@@ -18,3 +20,10 @@ class ConfiguracionDeporteViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated()]
         return []
     
+    def destroy(self, _request, *_args, **_kwargs):
+        instance = self.get_object()
+        # Eliminar el deporte asociado
+        instance.deporte.delete()
+        # Eliminar la configuración del deporte
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
