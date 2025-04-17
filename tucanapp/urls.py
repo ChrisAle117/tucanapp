@@ -10,6 +10,7 @@ urlpatterns = [
     path('eventos/', include('evento.urls')),
     path('config_deporte/', include('configuracion_deporte.urls')),
     path('posicion/', include('posicion.urls')),
+    path('jugadores/', include('jugador.urls')),
     path('' , index, name='index'),
     path('login/' , login_view, name='login'),
     path('logout/' , logout_view, name='logout'),
