@@ -1,6 +1,6 @@
 from .models import Evento
 from .serializers import EventoSerializer
-
+from rest_framework.exceptions import ValidationError
 
 from rest_framework import viewsets
 from rest_framework.renderers import JSONRenderer
@@ -42,3 +42,15 @@ class EventoViewSet(viewsets.ModelViewSet):
             'proximosEventos': proximos_eventos_serializados,
             'eventosFinalizados': eventos_finalizados_serializados
         })
+    
+    
+    
+    def perform_update(self, serializer):
+        try:
+            instance = serializer.save()
+            instance.resultado = instance.calcular_resultado()
+            instance.save()
+        except ValidationError as e:
+            raise ValidationError({"detail": str(e)})
+
+    
