@@ -8,7 +8,7 @@ from rest_framework import serializers
 from .models import Evento
 
 class EventoSerializer(serializers.ModelSerializer):
-    deporte = serializers.CharField(source='deporte.nombre', read_only=True)
+    deporte_nombre = serializers.CharField(source='deporte.nombre', read_only=True)
     class Meta:
         model = Evento
         fields = '__all__'
