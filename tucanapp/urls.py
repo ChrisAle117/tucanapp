@@ -15,7 +15,7 @@ urlpatterns = [
     path('jugadores/', include('jugador.urls')),
     path('' , index, name='index'),
     path('login/' , login_view, name='login'),
-    path('logout/' , logout_view, name='logout'),,
+    path('logout/' , logout_view, name='logout'),
 ]
 
 # Esto sirve las imágenes en desarrollo

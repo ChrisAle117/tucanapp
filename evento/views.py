@@ -27,33 +27,14 @@ class EventoViewSet(viewsets.ModelViewSet):
         if self.request.method in ['GET']:
             return []
         return [IsAuthenticated()]
-    
-    @action(detail=False, methods=['get'])
-    def listar_eventos(self, request):
 
-
-        proximos_eventos = Evento.objects.filter(fecha__gt=now()).order_by('fecha')[:10]
-
-        eventos_finalizados_serializados = self.get_serializer(eventos_finalizados, many=True).data
-        proximos_eventos_serializados = self.get_serializer(proximos_eventos, many=True).data
-
-
-        return Response({
-            'proximosEventos': proximos_eventos_serializados,
-            'eventosFinalizados': eventos_finalizados_serializados
-        })
-    
     def create(self, request, *args, **kwargs):
         data = request.data
-        print(f"Datos recibidos: {data}")
 
         deporte_id = data.get('deporte')
         if not deporte_id:
             return Response({'error': 'El campo deporte es obligatorio.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        deporte = get_object_or_404(Deporte, id=deporte_id)
-        print(f"Deporte encontrado: {deporte}")
-
+        
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -61,12 +42,6 @@ class EventoViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        self.deporte = self.equipo1.deporte
-        super().save(*args, **kwargs)
-
     def perform_update(self, serializer):
         try:
             instance = serializer.save()

@@ -2,14 +2,8 @@ from django.utils import timezone
 from django.db import models
 from django.forms import ValidationError
 
-from equipo.models import Equipo, Deporte
-
-class Deporte(models.Model):
-    nombre = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.nombre
-
+from equipo.models import Equipo
+from deporte.models import Deporte
 
 class Evento(models.Model):
     nombre = models.CharField(max_length=45)

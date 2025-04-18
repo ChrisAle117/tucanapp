@@ -1,0 +1,7 @@
+Django==5.1.5
+pillow==11.2.1
+python-dotenv==1.1.0
+pymysql==1.1.0
+djangorestframework-simplejwt==5.2.2
+setuptools==67.8.0
+django-cors-headers==4.0.0
