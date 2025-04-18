@@ -7,4 +7,5 @@ router.register(r'api', JugadorViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('jugadores/<int:pk>/', jugador_list, name='jugador-detail'),
 ]

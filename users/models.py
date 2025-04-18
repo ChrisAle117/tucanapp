@@ -32,7 +32,6 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     ROLES = (
-        ('presidente', 'Presidente'),
         ('admin', 'Administrador'),
         ('entrenador', 'Entrenador'),
     )
