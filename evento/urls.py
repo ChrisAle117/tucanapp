@@ -7,5 +7,6 @@ router.register(r'api', EventoViewSet, basename='eventos')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('listar_eventos/', EventoViewSet.as_view({'get': 'listar_eventos'}), name='listar_eventos')
+    path('listar_eventos/', EventoViewSet.as_view({'get': 'listar_eventos'}), name='listar_eventos'),
+    path('equipo/<int:pk>/', evento_list, name='evento_list'),
 ]
