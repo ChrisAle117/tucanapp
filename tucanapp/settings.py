@@ -16,7 +16,12 @@ pymysql.install_as_MySQLdb()
 # from logging.handlers import RotatingFileHandler
 
 from pathlib import Path
+
 import os
+
+
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -200,6 +205,16 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+#Configuración para Gmail
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+# Usar su correo de UTEZ
+EMAIL_HOST_USER = "20213tn094@utez.edu.mx"
+# Obtener de https://myaccount.google.com/apppasswords
+EMAIL_HOST_PASSWORD = "xezs bppr ghox otpv"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
