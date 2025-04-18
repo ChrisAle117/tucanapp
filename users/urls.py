@@ -22,5 +22,9 @@ urlpatterns = [
     path('registrar/', CustomUserFormAPI.as_view() , name='register'),
 
     path('dashboard/', dashboard, name='dashboard'),
+    #URLS para envio y recuperación de contraseña
+    path("send-reset-email/", send_reset_email, name="send_reset_email"),
+    path("reset-password/", reset_password, name="reset_password"),
+
 
 ]
