@@ -1,15 +1,31 @@
 from django.db import models
-from django.forms import ValidationError
+from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 
 from deporte.models import Deporte
 from configuracion_deporte.models import ConfiguracionDeporte
 from users.models import CustomUser as Usuario
 
+def validate_image_size(value):
+    # Limitar el tamaño del archivo a 5 MB (5 * 1024 * 1024 bytes)
+    limit = 5 * 1024 * 1024  # 5 MB en bytes
+    if value.size > limit:
+        raise ValidationError('El tamaño del archivo no puede ser mayor a 5 MB.')
+
 class Equipo(models.Model):
     nombre = models.CharField(max_length=45, unique=True)
-    logo_url = models.URLField(max_length=200, blank=True, null=True)
+    logo = models.ImageField(
+        upload_to='logos_equipos/', 
+        blank=True, 
+        null=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'png']),
+            validate_image_size
+        ]
+    )  
     descripcion = models.TextField(blank=True, null=True)
     ciudad = models.CharField(max_length=45)
+    
     entrenador = models.ForeignKey(
         Usuario,
         on_delete=models.SET_NULL,
@@ -17,27 +33,35 @@ class Equipo(models.Model):
         blank=True,
         related_name='equipos_entrenados'
     )
+    
     deporte = models.ForeignKey(Deporte, on_delete=models.CASCADE)
     num_titulares = models.IntegerField(default=0)
     num_suplentes = models.IntegerField(default=0)
     
     def save(self, *args, **kwargs):
-        self.full_clean() 
+        self.full_clean()  # Llama al método clean antes de guardar
         super().save(*args, **kwargs)
 
     def clean(self):
         errors = {}
+
         if self.entrenador and self.entrenador.rol != 'entrenador':
             errors['entrenador'] = 'El usuario asignado no es un entrenador'
+
         if self.num_titulares < 0 or self.num_suplentes < 0:
             errors['num_titulares'] = 'El número de titulares y suplentes no puede ser negativo'
-        if self.num_titulares > ConfiguracionDeporte.objects.get(deporte=self.deporte).max_titulares:
-            errors['num_titulares'] = 'El número de titulares excede el máximo permitido'
-        if self.num_suplentes > ConfiguracionDeporte.objects.get(deporte=self.deporte).max_suplentes:
-            errors['num_suplentes'] = 'El número de suplentes excede el máximo permitido'
+
+        try:
+            config = ConfiguracionDeporte.objects.get(deporte=self.deporte)
+            if self.num_titulares > config.max_titulares:
+                errors['num_titulares'] = f'No puedes tener más de {config.max_titulares} titulares'
+            if self.num_suplentes > config.max_suplentes:
+                errors['num_suplentes'] = f'No puedes tener más de {config.max_suplentes} suplentes'
+        except ConfiguracionDeporte.DoesNotExist:
+            errors['deporte'] = 'No existe configuración para este deporte'
 
         if errors:
             raise ValidationError(errors)
-    
+
     def __str__(self):
         return f"{self.nombre} ({self.ciudad})"
