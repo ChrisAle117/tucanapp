@@ -18,9 +18,11 @@ class EquipoViewSet(viewsets.ModelViewSet):
     permission_classes=[IsAuthenticated]
 
     def get_permissions(self):
-        if self.request.method in ['GET','POST','PUT', 'DELETE']:
-            return [IsAuthenticated()]
-        return []
+        # Permitir acceso público para solicitudes GET
+        if self.request.method == 'GET':
+            return []  # Sin autenticación para GET
+        return [IsAuthenticated()]  # Requiere autenticación para otros métodos
+    
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():

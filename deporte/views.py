@@ -17,7 +17,7 @@ class DeporteViewSet(viewsets.ModelViewSet):
     permission_classes=[IsAuthenticated]
 
     def get_permissions(self):
-        if self.request.method in ['GET','POST','PUT', 'DELETE']:
-            return [IsAuthenticated()]
-        return []
+        if self.request.method == 'GET':
+            return []  
+        return [IsAuthenticated()]  
 
