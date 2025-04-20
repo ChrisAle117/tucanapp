@@ -30,6 +30,7 @@ class Evento(models.Model):
     puntos_equipo1 = models.IntegerField(null=True, blank=True)
     puntos_equipo2 = models.IntegerField(null=True, blank=True)
     resultado = models.CharField(max_length=225, blank=True, null=True)
+    resultado_equipo1 = models.CharField(max_length=225, blank=True, null=True)
 
     def calcular_resultado(self):
         if self.puntos_equipo1 > self.puntos_equipo2:

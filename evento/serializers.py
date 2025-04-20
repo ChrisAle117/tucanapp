@@ -9,6 +9,7 @@ from .models import Evento
 
 class EventoSerializer(serializers.ModelSerializer):
     deporte_nombre = serializers.CharField(source='deporte.nombre', read_only=True)
+    resultado_equipo = serializers.SerializerMethodField()
     class Meta:
         model = Evento
         fields = '__all__'
@@ -20,3 +21,28 @@ class EventoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Un equipo no puede jugar contra sí mismo")
         return data
     
+    
+    def get_resultado_equipo(self, obj):
+        equipo_id = self.context.get('equipo_id')  # Obtener el ID del equipo desde el contexto
+        if not equipo_id:
+            return None
+
+        
+        if obj.puntos_equipo1 is None or obj.puntos_equipo2 is None:
+                return "Resultado pendiente"
+
+        if obj.equipo1.id == equipo_id:
+                if obj.puntos_equipo1 > obj.puntos_equipo2:
+                    return "Ganó"
+                elif obj.puntos_equipo1 < obj.puntos_equipo2:
+                    return "Perdió"
+                else:
+                    return "Empató"
+        elif obj.equipo2.id == equipo_id:
+                if obj.puntos_equipo2 > obj.puntos_equipo1:
+                    return "Ganó"
+                elif obj.puntos_equipo2 < obj.puntos_equipo1:
+                    return "Perdió"
+                else:
+                    return "Empató"
+        return None

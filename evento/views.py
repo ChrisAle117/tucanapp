@@ -112,5 +112,5 @@ from django.db.models import Q
 @api_view(['GET'])
 def evento_list(request, pk):
     eventos = Evento.objects.filter(Q(equipo1=pk) | Q(equipo2=pk))
-    serializer = EventoSerializer(eventos, many=True)
+    serializer = EventoSerializer(eventos, many=True, context={'equipo_id': pk})
     return Response({'eventos': serializer.data}, status=200)
