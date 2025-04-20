@@ -68,10 +68,7 @@ class EventoViewSet(viewsets.ModelViewSet):
     
 def perform_update(self, serializer):
     try:
-
         instance = serializer.save()
-
-
         current_time = now()
         limite_fecha = current_time - timedelta(days=6)
 
