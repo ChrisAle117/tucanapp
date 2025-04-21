@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(max_length=254, unique=True)),
                 ('nombre', models.CharField(max_length=100)),
                 ('apellidos', models.CharField(max_length=50)),
-                ('rol', models.CharField(choices=[('presidente', 'Presidente'), ('admin', 'Administrador'), ('entrenador', 'Entrenador')], max_length=10)),
+                ('rol', models.CharField(choices=[('admin', 'Administrador'), ('entrenador', 'Entrenador')], max_length=10)),
                 ('detalles', models.TextField(blank=True, null=True)),
                 ('join_date', models.DateTimeField(default=django.utils.timezone.now)),
                 ('is_active', models.BooleanField(default=True)),
