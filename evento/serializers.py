@@ -33,16 +33,16 @@ class EventoSerializer(serializers.ModelSerializer):
 
         if obj.equipo1.id == equipo_id:
                 if obj.puntos_equipo1 > obj.puntos_equipo2:
-                    return "Ganó"
+                    return "Victoria"
                 elif obj.puntos_equipo1 < obj.puntos_equipo2:
-                    return "Perdió"
+                    return "Derrota"
                 else:
-                    return "Empató"
+                    return "Empate"
         elif obj.equipo2.id == equipo_id:
                 if obj.puntos_equipo2 > obj.puntos_equipo1:
-                    return "Ganó"
+                    return "Victoria"
                 elif obj.puntos_equipo2 < obj.puntos_equipo1:
-                    return "Perdió"
+                    return "Derrota"
                 else:
-                    return "Empató"
+                    return "Empate"
         return None

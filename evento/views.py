@@ -108,7 +108,42 @@ from django.db.models import Q
 @permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
 @api_view(['GET'])
-def evento_list(request, pk):
+def estadisticas_equipo(request, pk):
+
     eventos = Evento.objects.filter(Q(equipo1=pk) | Q(equipo2=pk))
     serializer = EventoSerializer(eventos, many=True, context={'equipo_id': pk})
-    return Response({'eventos': serializer.data}, status=200)
+    eventos_serializados = serializer.data
+
+    victorias = sum(
+        1 for evento in eventos_serializados
+        if (evento['resultado_equipo'] == "Victoria" and evento['equipo1'] == pk and evento['puntos_equipo1'] > evento['puntos_equipo2']) or
+           (evento['resultado_equipo'] == "Victoria" and evento['equipo2'] == pk and evento['puntos_equipo2'] > evento['puntos_equipo1'])
+    )
+
+    derrotas = sum(
+        1 for evento in eventos_serializados
+        if (evento['resultado_equipo'] == "Derrota" and evento['equipo1'] == pk and evento['puntos_equipo1'] < evento['puntos_equipo2']) or
+           (evento['resultado_equipo'] == "Derrota" and evento['equipo2'] == pk and evento['puntos_equipo2'] < evento['puntos_equipo1'])
+    )
+
+    empates = sum(
+        1 for evento in eventos_serializados
+        if evento['resultado_equipo'] == "Empate" and evento['puntos_equipo1'] == evento['puntos_equipo2']
+    )
+
+    total_partidos = victorias + derrotas + empates
+    efectividad = (victorias / total_partidos * 100) if total_partidos > 0 else 0
+
+
+    efectividad = round(efectividad, 2)
+
+    
+    return Response({
+        'eventos': eventos_serializados,
+        'estadisticas': {
+            'victorias': victorias,
+            'derrotas': derrotas,
+            'empates': empates,
+            'efectividad': efectividad
+        }
+    }, status=200)
