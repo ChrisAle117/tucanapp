@@ -8,12 +8,10 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import is_naive
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils.timezone import now
 from rest_framework import status
-from .models import Deporte
-from django.shortcuts import get_object_or_404
+
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
 
