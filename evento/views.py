@@ -111,12 +111,11 @@ from django.db.models import Q
 @authentication_classes([JWTAuthentication])
 @api_view(['GET'])
 def estadisticas_equipo(request, pk):
-    # Filtrar eventos donde el equipo sea equipo1 o equipo2
+
     eventos = Evento.objects.filter(Q(equipo1=pk) | Q(equipo2=pk))
     serializer = EventoSerializer(eventos, many=True, context={'equipo_id': pk})
     eventos_serializados = serializer.data
 
-    # Calcular estadísticas
     victorias = sum(
         1 for evento in eventos_serializados
         if (evento['resultado_equipo'] == "Victoria" and evento['equipo1'] == pk and evento['puntos_equipo1'] > evento['puntos_equipo2']) or
@@ -137,10 +136,10 @@ def estadisticas_equipo(request, pk):
     total_partidos = victorias + derrotas + empates
     efectividad = (victorias / total_partidos * 100) if total_partidos > 0 else 0
 
-    # Redondear efectividad a 2 decimales
+
     efectividad = round(efectividad, 2)
 
-    # Respuesta con eventos y estadísticas
+    
     return Response({
         'eventos': eventos_serializados,
         'estadisticas': {
