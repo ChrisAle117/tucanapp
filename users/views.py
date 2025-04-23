@@ -115,7 +115,7 @@ def send_reset_email(request):
                     <p>O copia y pega este enlace en tu navegador:</p>
                     <p><a href="{reset_link}" style="color: #0066cc;">{reset_link}</a></p>
                     <p>Si no solicitaste este cambio, ignora este mensaje.</p>
-                    <p>Saludos,<br>El equipo de ErrorPages</p>
+                    <p>Saludos,<br>El equipo Tucan</p>
                 </body>
                 </html>
                 """
@@ -161,8 +161,8 @@ def reset_password(request):
                             Iniciar sesión
                         </a>
                     </p>
-                    <p>Si no solicitaste este cambio, Tu cuenta esta en peligro, ponte en contacto con admin@errorpages.com.</p>
-                    <p>Saludos,<br>El equipo de ErrorPages</p>
+                    <p>Si no solicitaste este cambio, Tu cuenta esta en peligro, ponte en contacto con 20223tn097@utez.edu.mx.</p>
+                    <p>Saludos,<br>El equipo Tucan</p>
                 </body>
                 </html>
                 """

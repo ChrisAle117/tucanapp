@@ -8,6 +8,6 @@ class PosicionSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
     def validate_nombre(self, value):
-        if not re.match(r'^[a-zA-Z\s]+$', value):
-            raise serializers.ValidationError("El nombre solo puede contener letras y espacios.")
+        if not re.match(r'^[A-Za-z0-9_ ]+$', value):  # Se agregó el espacio al patrón
+            raise serializers.ValidationError("El nombre solo puede contener letras, números, guiones bajos y espacios.")
         return value
