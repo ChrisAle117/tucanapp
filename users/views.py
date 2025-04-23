@@ -67,9 +67,6 @@ class CustomUserFormAPI(APIView):
             return Response({'message': f'Error: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def dashboard(request):
-    return render(request, 'dashboard.html')
-
 from django.contrib.auth import  logout
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
