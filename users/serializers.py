@@ -47,7 +47,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password', None)
         instance = self.Meta.model(**validated_data)
         if password:
-            instance.set_password(password)  # Encripta la contraseña
+            instance.set_password(password) 
         instance.save()
         return instance
 
@@ -56,7 +56,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         if password:
-            instance.set_password(password)  # Encripta la contraseña
+            instance.set_password(password)
         instance.save()
         return instance
 
