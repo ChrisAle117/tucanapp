@@ -5,6 +5,9 @@ from django.core.validators import FileExtensionValidator
 from deporte.models import Deporte
 from configuracion_deporte.models import ConfiguracionDeporte
 from users.models import CustomUser as Usuario
+from django.utils import timezone
+from django.db.models import Q
+
 
 def validate_image_size(value):
     # Limitar el tamaño del archivo a 5 MB (5 * 1024 * 1024 bytes)
@@ -37,6 +40,7 @@ class Equipo(models.Model):
     deporte = models.ForeignKey(Deporte, on_delete=models.CASCADE)
     num_titulares = models.IntegerField(default=0)
     num_suplentes = models.IntegerField(default=0)
+    activo = models.BooleanField(default=True) 
     
     def save(self, *args, **kwargs):
         self.full_clean()  # Llama al método clean antes de guardar
@@ -59,6 +63,18 @@ class Equipo(models.Model):
                 errors['num_suplentes'] = f'No puedes tener más de {config.max_suplentes} suplentes'
         except ConfiguracionDeporte.DoesNotExist:
             errors['deporte'] = 'No existe configuración para este deporte'
+
+        if not self.activo:
+            from evento.models import Evento  # Importar aquí para evitar dependencias circulares
+        
+            # Verificar si el equipo ya está guardado en la base de datos
+            if self.pk:  # Solo realizar la validación si el equipo ya tiene un ID
+                eventos_futuros = Evento.objects.filter(
+                    (Q(equipo1=self) | Q(equipo2=self)) & Q(fecha__gte=timezone.now())
+                )
+                if eventos_futuros.exists():
+                    errors['activo'] = 'No puedes desactivar un equipo con eventos futuros'
+        
 
         if errors:
             raise ValidationError(errors)

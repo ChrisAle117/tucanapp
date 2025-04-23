@@ -11,6 +11,7 @@ from django.utils.timezone import is_naive
 from rest_framework.response import Response
 from django.utils.timezone import now
 from rest_framework import status
+from equipo.models import Equipo
 
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
@@ -39,6 +40,21 @@ class EventoViewSet(viewsets.ModelViewSet):
         if not fecha_evento:
             return Response({'error': 'El campo fecha es obligatorio.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        equipo1_id = data.get('equipo1')
+        equipo2_id = data.get('equipo2')
+
+        if not equipo1_id or not equipo2_id:
+            return Response({'error': 'Ambos equipos son obligatorios.'}, status=status.HTTP_400_BAD_REQUEST)
+
+          # Importar el modelo Equipo
+        try:
+            equipo1 = Equipo.objects.get(id=equipo1_id)
+            equipo2 = Equipo.objects.get(id=equipo2_id)
+        except Equipo.DoesNotExist:
+            return Response({'error': 'Uno o ambos equipos no existen.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not equipo1.activo or not equipo2.activo:
+            return Response({'error': 'No se pueden crear eventos con equipos inactivos.'}, status=status.HTTP_400_BAD_REQUEST)
 
         current_time = now()
         limite_fecha = current_time - timedelta(days=6)

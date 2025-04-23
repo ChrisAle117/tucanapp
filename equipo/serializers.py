@@ -5,6 +5,9 @@ class EquipoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipo
         fields = '__all__'
+        extra_kwargs = {
+            'activo': {'default': True, 'required': False}  # Valor predeterminado y no obligatorio
+        }
     
     def validate(self, data):
         # Crea una instancia temporal para validar
