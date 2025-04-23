@@ -41,7 +41,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = '__all__'
+        fields = ['id' , 'nombre', 'apellidos', 'username', 'email', 'rol']
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)

@@ -15,7 +15,6 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from django.contrib.auth.decorators import login_required
 
 
 #Importaciones para enviar correo y recuperación de contraseña
@@ -37,6 +36,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.request.method in ['GET','POST','PUT', 'DELETE']:
             # Checar si tenemos sesión 
             return [IsAuthenticated()]
+    
 
 
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -67,30 +67,8 @@ class CustomUserFormAPI(APIView):
             return Response({'message': f'Error: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-from django.contrib.auth import  logout
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 import json
 from .message import message as Message
-
-def login_view(request):
-    return render(request, 'login.html')
-
-def logout_view(request):
-    logout(request)
-
-    message = Message(
-        type="info",
-        message="Se ha cerrado la sesión exitosamente",
-        code=200,
-        img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8MIbugIhZBykSmQcR0QPcfnPUBOZQ6bm35w&s"
-    )
-    return render(request, "login.html", {"message": json.dumps(message.to_dict())})
-
-@login_required
-def home_view(request):
-    return render(request, 'home.html')
-
 
 #Vista para generar el token y enviar correo con token
 @csrf_exempt
