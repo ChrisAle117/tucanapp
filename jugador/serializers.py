@@ -11,7 +11,7 @@ class JugadorSerializer(serializers.ModelSerializer):
 
     def validate_nombre(self, value):
 
-        if not re.match(r'^[a-zA-Z\s]+$', value):
+        if not re.match(r'^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$', value):
             raise serializers.ValidationError("El nombre solo puede contener letras y espacios.")
         return value
 
