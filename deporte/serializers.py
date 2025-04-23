@@ -1,5 +1,6 @@
 from .models import Deporte
 from rest_framework import serializers
+import re
 
 class DeporteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True)
@@ -10,13 +11,20 @@ class DeporteSerializer(serializers.ModelSerializer):
         model = Deporte
         fields = ['id', 'nombre', 'max_titulares', 'max_suplentes']
 
+
+    def validate_nombre(self, value):
+        if not re.match(r'^[a-zA-Z0-9\s]+$', value):
+            raise serializers.ValidationError("El nombre solo puede contener letras, números y espacios.")
+        return value
+
+    
     def create(self, validated_data):
-        # Crear el objeto Deporte directamente, ya que las validaciones se manejan en validate
+        
         deporte = Deporte.objects.create(**validated_data)
         return deporte
 
     def update(self, instance, validated_data):
-        # Actualizar solo los campos que han cambiado
+        
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
