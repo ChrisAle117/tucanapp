@@ -26,13 +26,10 @@ class EventoSerializer(serializers.ModelSerializer):
         if not re.match(r'^[a-zA-Z0-9\s]+$', value):
             raise serializers.ValidationError("El nombre del evento solo puede contener letras, números y espacios.")
         return value
-
     def validate_puntos_equipo1(self, value):
         if value is not None and value < 0:
             raise serializers.ValidationError("Los puntos del equipo 1 no pueden ser negativos.")
         return value
-
-
     def validate_puntos_equipo2(self, value):
         if value is not None and value < 0:
             raise serializers.ValidationError("Los puntos del equipo 2 no pueden ser negativos.")
@@ -42,8 +39,6 @@ class EventoSerializer(serializers.ModelSerializer):
         equipo_id = self.context.get('equipo_id') 
         if not equipo_id:
             return None
-
-        
         if obj.puntos_equipo1 is None or obj.puntos_equipo2 is None:
                 return "Resultado pendiente"
 
