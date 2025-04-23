@@ -10,8 +10,8 @@ from django.db.models import Q
 
 
 def validate_image_size(value):
-    # Limitar el tamaño del archivo a 5 MB (5 * 1024 * 1024 bytes)
-    limit = 5 * 1024 * 1024  # 5 MB en bytes
+    
+    limit = 5 * 1024 * 1024 
     if value.size > limit:
         raise ValidationError('El tamaño del archivo no puede ser mayor a 5 MB.')
 
@@ -43,7 +43,7 @@ class Equipo(models.Model):
     activo = models.BooleanField(default=True) 
     
     def save(self, *args, **kwargs):
-        self.full_clean()  # Llama al método clean antes de guardar
+        self.full_clean() 
         super().save(*args, **kwargs)
 
     def clean(self):
@@ -65,10 +65,9 @@ class Equipo(models.Model):
             errors['deporte'] = 'No existe configuración para este deporte'
 
         if not self.activo:
-            from evento.models import Evento  # Importar aquí para evitar dependencias circulares
+            from evento.models import Evento  
         
-            # Verificar si el equipo ya está guardado en la base de datos
-            if self.pk:  # Solo realizar la validación si el equipo ya tiene un ID
+            if self.pk:  
                 eventos_futuros = Evento.objects.filter(
                     (Q(equipo1=self) | Q(equipo2=self)) & Q(fecha__gte=timezone.now())
                 )
