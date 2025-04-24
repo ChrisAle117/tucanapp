@@ -212,7 +212,7 @@ EMAIL_USE_TLS = True
 # Usar su correo de UTEZ
 EMAIL_HOST_USER = "20213tn094@utez.edu.mx"
 # Obtener de https://myaccount.google.com/apppasswords
-EMAIL_HOST_PASSWORD = "xezs bppr ghox otpv"
+EMAIL_HOST_PASSWORD = "" # Se elimina este campo por temas de seguridad
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
